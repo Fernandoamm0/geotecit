@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logística GeotecIT - Salidas y Retornos</title>
+    <style>
+        /* Ajuste para que el footer se quede abajo */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: #0f172a; 
+            color: #f8fafc; 
+            margin: 0; 
+            padding: 30px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+        .dashboard-wrapper { display: flex; gap: 25px; align-items: flex-start; max-width: 1200px; width: 100%; margin-bottom: 40px; }
+        
+        /* Paneles */
+        .panel { background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .panel-left { flex: 1.2; }
+        .panel-right { flex: 0.8; }
+
+        h2 { text-align: center; color: #10b981; margin-bottom: 25px; margin-top: 0; font-size: 22px; text-transform: uppercase; letter-spacing: 1px;}
+        h3 { color: #38bdf8; font-size: 18px; margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 20px;}
+
+        /* Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; background: #0f172a; padding: 5px; border-radius: 8px; }
+        .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 6px; background: transparent; color: #94a3b8; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .tab-btn.active { background: #10b981; color: #0f172a; }
+
+        /* Formulario */
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; }
+        select, input, textarea { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 15px; outline: none; box-sizing: border-box; }
+        select:focus, input:focus, textarea:focus { border-color: #10b981; }
+        textarea { height: 90px; resize: none; }
+        
+        .btn-submit { width: 100%; padding: 15px; background: #10b981; color: #0f172a; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
+        .btn-submit:hover { opacity: 0.9; transform: scale(1.01); }
+
+        /* Manual */
+        .manual-item { margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1; }
+        .manual-item strong { color: #f8fafc; display: block; margin-bottom: 5px; }
+        .loader { text-align: center; color: #38bdf8; font-weight: bold; margin-bottom: 20px; display: none; }
+
+        /* Footer Estilo Index */
+        .footer { 
+            margin-top: auto; 
+            padding: 30px; 
+            color: #475569; 
+            font-size: 12px; 
+            letter-spacing: 1px; 
+            text-align: center;
+            border-top: 1px solid #1e293b;
+            width: 100%;
+        }
+
+        @media (max-width: 900px) { .dashboard-wrapper { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+    <div class="panel panel-left">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://geotecit.com/wp-content/uploads/2020/09/Geoteicit_Logo_baja_digital.png" width="180">
+        </div>
+        
+        <h2 id="tituloModulo">Logística de Salidas</h2>
+
+        <div class="tabs">
+            <button class="tab-btn active" id="btnSalida" onclick="cambiarModo('salida')">📤 Salida a IDC</button>
+            <button class="tab-btn" id="btnRetorno" onclick="cambiarModo('retorno')">📥 Retorno a Lab</button>
+        </div>
+
+        <div id="loader" class="loader">Sincronizando con Google Sheets...</div>
+
+        <div id="formContent">
+            <div class="form-group">
+                <label id="labelSeleccion">Seleccionar OR Liberada (QA OK)</label>
+                <select id="selectOR">
+                    <option value="">-- Buscando equipos --</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="grupoIDC">
+                <label>Nombre del IDC / Técnico que recibe</label>
+                <input type="text" id="nombreIDC" placeholder="Nombre completo">
+            </div>
+
+            <div class="form-group" id="grupoLocalidad">
+                <label>Localidad (Estado de la República)</label>
+                <select id="localidad">
+                    <option value="">-- Seleccione Estado --</option>
+                    <option value="Aguascalientes">Aguascalientes</option>
+                    <option value="Baja California">Baja California</option>
+                    <option value="Baja California Sur">Baja California Sur</option>
+                    <option value="Campeche">Campeche</option>
+                    <option value="Chiapas">Chiapas</option>
+                    <option value="Chihuahua">Chihuahua</option>
+                    <option value="Ciudad de México">Ciudad de México</option>
+                    <option value="Coahuila">Coahuila</option>
+                    <option value="Colima">Colima</option>
+                    <option value="Durango">Durango</option>
+                    <option value="Estado de México">Estado de México</option>
+                    <option value="Guanajuato">Guanajuato</option>
+                    <option value="Guerrero">Guerrero</option>
+                    <option value="Hidalgo">Hidalgo</option>
+                    <option value="Jalisco">Jalisco</option>
+                    <option value="Michoacán">Michoacán</option>
+                    <option value="Morelos">Morelos</option>
+                    <option value="Nayarit">Nayarit</option>
+                    <option value="Nuevo León">Nuevo León</option>
+                    <option value="Oaxaca">Oaxaca</option>
+                    <option value="Puebla">Puebla</option>
+                    <option value="Querétaro">Querétaro</option>
+                    <option value="Quintana Roo">Quintana Roo</option>
+                    <option value="San Luis Potosí">San Luis Potosí</option>
+                    <option value="Sinaloa">Sinaloa</option>
+                    <option value="Sonora">Sonora</option>
+                    <option value="Tabasco">Tabasco</option>
+                    <option value="Tamaulipas">Tamaulipas</option>
+                    <option value="Tlaxcala">Tlaxcala</option>
+                    <option value="Veracruz">Veracruz</option>
+                    <option value="Yucatán">Yucatán</option>
+                    <option value="Zacatecas">Zacatecas</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label id="labelObs">Observaciones de logística (Salida)</label>
+                <textarea id="observaciones" placeholder="Detalles adicionales del envío o retorno..."></textarea>
+            </div>
+
+            <button class="btn-submit" id="btnPrincipal" onclick="registrarMovimiento()">Registrar Salida a IDC</button>
+        </div>
+    </div>
+
+    <div class="panel panel-right">
+        <h3>📖 Manual de Control IDC</h3>
+        <div class="manual-item">
+            <strong>1. Registro de Salida:</strong>
+            Utilice esta pestaña al entregar equipo a un técnico. Es vital registrar la <b>Localidad</b> para ubicar el stock en tránsito.
+        </div>
+        <div class="manual-item">
+            <strong>2. Registro de Retorno:</strong>
+            Use esto cuando el IDC regrese el módulo. El equipo volverá a aparecer en la lista de Laboratorio.
+        </div>
+        <div class="manual-item">
+            <strong>3. Observaciones Separadas:</strong>
+            El sistema guarda comentarios distintos para la salida y el retorno, permitiendo auditar el estado físico en ambos momentos.
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    © 2026 GEOTECIT Sistema de control de Envios y Retornos | Desarrollado por Ing. Fernando Mora.
+</div>
+
+<script>
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwTC7wcCHPg5gvLAynqYhTs9FhSrSLbBWiM9Rc6cvJRcfKkrU0RhoXEN2hJPus58C3X/exec"; 
+    
+    let dataHistorica = [];
+    let modoActual = 'salida';
+
+    async function cargarDatos() {
+        const loader = document.getElementById('loader');
+        const form = document.getElementById('formContent');
+        loader.style.display = 'block';
+        form.style.display = 'none';
+
+        try {
+            const res = await fetch(URL_SCRIPT);
+            const json = await res.json();
+            dataHistorica = json.dataHistorica;
+            loader.style.display = 'none';
+            form.style.display = 'block';
+            poblarDropdown();
+        } catch (e) {
+            loader.innerText = "❌ Error: Revisa la URL del Script";
+        }
+    }
+
+    function cambiarModo(modo) {
+        modoActual = modo;
+        const titulo = document.getElementById('tituloModulo');
+        const btn = document.getElementById('btnPrincipal');
+        const grupoIDC = document.getElementById('grupoIDC');
+        const grupoLoc = document.getElementById('grupoLocalidad');
+        const labelSel = document.getElementById('labelSeleccion');
+        const labelObs = document.getElementById('labelObs');
+        
+        document.getElementById('btnSalida').classList.toggle('active', modo === 'salida');
+        document.getElementById('btnRetorno').classList.toggle('active', modo === 'retorno');
+
+        if (modo === 'salida') {
+            titulo.innerText = "Logística de Salidas";
+            titulo.style.color = "#10b981";
+            btn.innerText = "Registrar Salida a IDC";
+            btn.style.background = "#10b981";
+            grupoIDC.style.display = "block";
+            grupoLoc.style.display = "block";
+            labelSel.innerText = "Seleccionar OR Liberada (QA OK)";
+            labelObs.innerText = "Observaciones de Logística (Salida)";
+        } else {
+            titulo.innerText = "Logística de Retornos";
+            titulo.style.color = "#38bdf8";
+            btn.innerText = "Registrar Retorno al Lab";
+            btn.style.background = "#38bdf8";
+            grupoIDC.style.display = "none";
+            grupoLoc.style.display = "none";
+            labelSel.innerText = "Seleccionar OR en IDC (En Tránsito)";
+            labelObs.innerText = "Observaciones de Logística (Retorno)";
+        }
+        poblarDropdown();
+    }
+
+    function poblarDropdown() {
+        const select = document.getElementById('selectOR');
+        select.innerHTML = '<option value="">-- Seleccione una Orden --</option>';
+        
+        let filtrados = dataHistorica.filter(item => 
+            modoActual === 'salida' ? item.estatus === "Liberado" : item.estatus === "En IDC"
+        );
+
+        if(filtrados.length === 0) {
+            select.innerHTML = '<option value="">No hay equipos para esta acción</option>';
+        } else {
+            filtrados.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.orden;
+                opt.innerText = `${item.orden} - ${item.marca} (${item.serie})`;
+                select.appendChild(opt);
+            });
+        }
+    }
+
+    async function registrarMovimiento() {
+        const or = document.getElementById('selectOR').value;
+        const btn = document.getElementById('btnPrincipal');
+        
+        if (!or) return alert("Seleccione una orden");
+
+        const payload = {
+            accion: "actualizar_logistica",
+            subAccion: modoActual,
+            orden: or,
+            idc_receptor: document.getElementById('nombreIDC').value,
+            localidad: document.getElementById('localidad').value,
+            observaciones: document.getElementById('observaciones').value
+        };
+
+        btn.disabled = true;
+        btn.innerText = "Registrando...";
+
+        try {
+            const res = await fetch(URL_SCRIPT, { method: "POST", body: JSON.stringify(payload) });
+            const result = await res.json();
+            if(result.status === "success") {
+                alert("✅ Movimiento registrado con éxito");
+                location.reload();
+            }
+        } catch (e) {
+            alert("Error de conexión");
+            btn.disabled = false;
+        }
+    }
+
+    cargarDatos();
+</script>
+
+</body>
+</html>

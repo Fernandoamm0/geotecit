@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ingreso GeotecIT</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #0f172a;
+        color: #f8fafc;
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        padding: 30px;
+        margin: 0;
+    }
+
+    .container, .manual {
+        background: #1e293b;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        border: 1px solid #334155;
+    }
+
+    .container { width: 480px; }
+    .manual { width: 340px; font-size: 14px; color: #cbd5e1; line-height: 1.5; }
+
+    h2 { text-align: center; color: #38bdf8; margin-bottom: 20px; }
+    h3 { color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+
+    .input-group { margin-bottom: 12px; }
+
+    label {
+        display: block;
+        font-size: 13px;
+        color: #94a3b8;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid #475569;
+        background: #0f172a;
+        color: white;
+        box-sizing: border-box;
+        font-size: 14px;
+        transition: border 0.3s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+        border-color: #38bdf8;
+        outline: none;
+    }
+
+    .readonly-field {
+        background: #1e293b;
+        color: #38bdf8;
+        font-weight: bold;
+        border: 1px dashed #475569;
+        cursor: not-allowed;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    textarea { resize: vertical; height: 70px; }
+
+    button {
+        width: 100%;
+        background: #10b981;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 16px;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        margin-top: 15px;
+        transition: background 0.3s;
+    }
+
+    button:hover { background: #059669; }
+
+    .logo { text-align: center; margin-bottom: 15px; }
+    
+    .footer { 
+        text-align: center; 
+        margin-top: 25px; 
+        font-size: 13px; 
+        color: #94a3b8; 
+        line-height: 1.4;
+    }
+    .footer strong { color: #cbd5e1; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="logo">
+        <img src="https://geotecit.com/wp-content/uploads/2020/09/Geoteicit_Logo_baja_digital.png" width="200" alt="GeotecIT">
+    </div>
+
+    <h2>Ingreso de Equipo a Laboratorio</h2>
+
+    <div class="input-group">
+        <label>Orden de Reparación</label>
+        <input type="text" id="orden" class="readonly-field" readonly>
+    </div>
+
+    <div class="input-group">
+        <label>Fecha de Ingreso</label>
+        <input type="text" id="fecha" class="readonly-field" readonly>
+    </div>
+
+    <div class="input-group">
+        <label>Marca</label>
+        <select id="marca">
+            <option value="">-- Selecciona Marca --</option>
+            <option value="Diebold">Diebold</option>
+            <option value="NCR">NCR</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label>Número de Parte</label>
+        <input type="text" id="parte" placeholder="Ej: 49-204123-000A">
+    </div>
+
+    <div class="input-group">
+        <label>Número de Serie</label>
+        <input type="text" id="serie" placeholder="Ingrese el número de serie">
+    </div>
+
+    <div class="input-group">
+        <label>Descripción</label>
+        <input type="text" id="descripcion" placeholder="Ej: Módulo dispensador, Lector de tarjetas...">
+    </div>
+
+    <div class="input-group">
+        <label>Falla reportada</label>
+        <textarea id="falla" placeholder="Describa el síntoma o reporte del cliente"></textarea>
+    </div>
+
+    <div class="input-group">
+        <label>Lugar de Procedencia</label>
+        <select id="procedencia">
+            <option value="">-- Selecciona Estado --</option>
+            <option value="Almacén interno" style="font-weight: bold; color: #f59e0b;">📦 Almacén interno / Scrap histórico</option>
+            <option value="Aguascalientes">Aguascalientes</option>
+            <option value="Baja California">Baja California</option>
+            <option value="Baja California Sur">Baja California Sur</option>
+            <option value="Campeche">Campeche</option>
+            <option value="Chiapas">Chiapas</option>
+            <option value="Chihuahua">Chihuahua</option>
+            <option value="Ciudad de México">Ciudad de México</option>
+            <option value="Coahuila">Coahuila</option>
+            <option value="Colima">Colima</option>
+            <option value="Durango">Durango</option>
+            <option value="Estado de México">Estado de México</option>
+            <option value="Guanajuato">Guanajuato</option>
+            <option value="Guerrero">Guerrero</option>
+            <option value="Hidalgo">Hidalgo</option>
+            <option value="Jalisco">Jalisco</option>
+            <option value="Michoacán">Michoacán</option>
+            <option value="Morelos">Morelos</option>
+            <option value="Nayarit">Nayarit</option>
+            <option value="Nuevo León">Nuevo León</option>
+            <option value="Oaxaca">Oaxaca</option>
+            <option value="Puebla">Puebla</option>
+            <option value="Querétaro">Querétaro</option>
+            <option value="Quintana Roo">Quintana Roo</option>
+            <option value="San Luis Potosí">San Luis Potosí</option>
+            <option value="Sinaloa">Sinaloa</option>
+            <option value="Sonora">Sonora</option>
+            <option value="Tabasco">Tabasco</option>
+            <option value="Tamaulipas">Tamaulipas</option>
+            <option value="Tlaxcala">Tlaxcala</option>
+            <option value="Veracruz">Veracruz</option>
+            <option value="Yucatán">Yucatán</option>
+            <option value="Zacatecas">Zacatecas</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label>IDC (Técnico de Campo que envía)</label>
+        <input type="text" id="idc" placeholder="Nombre, ID del técnico, o 'Rescate'">
+    </div>
+
+    <div class="input-group">
+        <label>Estatus al ingreso</label>
+        <select id="estatus">
+            <option value="">-- Diagnóstico inicial --</option>
+            <option value="Reparable">Reparable</option>
+            <option value="Irreparable">Irreparable</option>
+            <option value="Intervenido">Intervenido</option>
+            <option value="Piezas faltantes">Piezas faltantes</option>
+        </select>
+    </div>
+
+    <button onclick="guardar()" id="btnGuardar">Registrar Ingreso</button>
+
+    <div class="footer">
+        <strong>Sistema de control de entrada de equipo a laboratorio</strong><br>
+        Desarrollado por Ing. Fernando Mora
+    </div>
+</div>
+
+<div class="manual">
+    <h3>📘 Manual de Uso Operativo</h3>
+    
+    <p><b>1. Orden de Reparación y Fecha:</b><br> 
+    El folio se genera automáticamente (GT + Año + Sem + Consecutivo). El sistema reinicia el contador a 001 al inicio de cada semana para mantener el orden.</p>
+    
+    <p><b>2. Identificación del Equipo:</b><br> 
+    Seleccione la <b>Marca</b>. Si el <b>Número de Serie</b> o <b>Parte</b> es ilegible, escríbalo como "ILEGIBLE".</p>
+    
+    <p><b>3. Falla Reportada:</b><br> 
+    Transcriba el reporte exacto de la guía o documento de envío. Si no hay reporte, indique "Sin reporte de falla".</p>
+    
+    <p><b>4. Procedencia e IDC:</b><br> 
+    Indique de qué estado proviene el equipo y el nombre o identificador del Técnico de Campo (IDC) que lo envía. (Use "Almacén interno" para rescates).</p>
+
+    <p><b>5. Criterios de Estatus Inicial:</b></p>
+    <ul style="padding-left: 20px; margin-top: 5px;">
+        <li><b>Reparable:</b> Daño estándar, apto para proceso.</li>
+        <li><b>Irreparable:</b> Daño catastrófico visible (quemado, fractura severa).</li>
+        <li><b>Intervenido:</b> Evidencia de manipulación no autorizada o sellos rotos.</li>
+        <li><b>Piezas faltantes:</b> El módulo llega incompleto (faltan tornillos, tarjetas, etc).</li>
+    </ul>
+</div>
+
+<script>
+// Calcula el número de semana
+function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+}
+
+// Inicializa la interfaz (Fecha y Folio)
+function inicializarInterfaz() {
+    const ahora = new Date();
+    
+    // Fecha sin hora
+    const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    document.getElementById("fecha").value = ahora.toLocaleDateString('es-MX', opciones);
+
+    // Cálculos de semana y año
+    const year = ahora.getFullYear().toString().slice(-2);
+    const week = String(getWeekNumber(ahora)).padStart(2, '0');
+    const currentYearWeek = `${year}${week}`;
+
+    // Lógica de reseteo semanal local
+    let savedYearWeek = localStorage.getItem("yearWeek");
+    let contador = 1;
+
+    if (savedYearWeek === currentYearWeek) {
+        contador = parseInt(localStorage.getItem("contador")) || 1;
+    } else {
+        localStorage.setItem("yearWeek", currentYearWeek);
+        localStorage.setItem("contador", 1);
+    }
+
+    const strConsecutivo = String(contador).padStart(3, '0');
+    document.getElementById("orden").value = `GT${currentYearWeek}-${strConsecutivo}`;
+}
+
+inicializarInterfaz();
+
+async function guardar() {
+    const btn = document.getElementById("btnGuardar");
+    btn.innerText = "Guardando...";
+    btn.disabled = true;
+
+    const data = {
+        marca: document.getElementById("marca").value,
+        parte: document.getElementById("parte").value,
+        serie: document.getElementById("serie").value,
+        descripcion: document.getElementById("descripcion").value,
+        falla: document.getElementById("falla").value,
+        procedencia: document.getElementById("procedencia").value,
+        idc: document.getElementById("idc").value,
+        estatus: document.getElementById("estatus").value
+    };
+
+    if(!data.marca || !data.procedencia || !data.estatus){
+        alert("Por favor llena Marca, Procedencia y Estatus.");
+        btn.innerText = "Registrar Ingreso";
+        btn.disabled = false;
+        return;
+    }
+
+    // AQUI PEGAS TU URL DE APPS SCRIPT AL HACER LA IMPLEMENTACION
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwTC7wcCHPg5gvLAynqYhTs9FhSrSLbBWiM9Rc6cvJRcfKkrU0RhoXEN2hJPus58C3X/exec"; 
+
+    try {
+        const respuesta = await fetch(URL_SCRIPT, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "text/plain;charset=utf-8" }
+        });
+
+        const resultado = await respuesta.json();
+
+        if(resultado.status === "success") {
+            // Sincronizar el contador local con el real del servidor
+            const match = resultado.ordenAsignada.match(/-(\d{3})$/);
+            if(match) {
+                localStorage.setItem("contador", parseInt(match[1], 10) + 1);
+            }
+            
+            alert("✅ Equipo registrado con éxito.\nOrden generada: " + resultado.ordenAsignada);
+            location.reload(); 
+        } else {
+            alert("Hubo un problema al guardar.");
+        }
+    } catch (error) {
+        alert("Error de conexión. Revisa que hayas puesto la URL de Apps Script.");
+        console.error(error);
+    }
+
+    btn.innerText = "Registrar Ingreso";
+    btn.disabled = false;
+}
+</script>
+
+</body>
+</html>

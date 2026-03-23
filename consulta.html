@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta GeotecIT - Tracking</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 30px; display: flex; justify-content: center; align-items: flex-start; }
+        .dashboard-wrapper { display: flex; gap: 25px; align-items: flex-start; max-width: 1200px; width: 100%; }
+        
+        /* Panel Izquierdo (Buscador) */
+        .panel-left { flex: 1.2; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        
+        /* Panel Derecho (Manual) */
+        .panel-right { flex: 0.8; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+
+        h2 { text-align: center; color: #38bdf8; margin-bottom: 25px; margin-top: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;}
+        h3 { color: #38bdf8; font-size: 18px; display: flex; align-items: center; gap: 10px; margin-top: 0; }
+
+        /* Buscador */
+        .search-box { display: flex; gap: 10px; margin-bottom: 30px; }
+        input { flex: 1; padding: 12px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 16px; outline: none; }
+        input:focus { border-color: #38bdf8; }
+        button { background: #38bdf8; color: #0f172a; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #0ea5e9; }
+
+        /* Resultado */
+        .result-card { display: none; background: #0f172a; padding: 25px; border-radius: 10px; border: 1px solid #38bdf8; animation: fadeIn 0.5s; }
+        .status-badge { display: inline-block; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; margin-bottom: 20px; }
+        
+        .info-row { display: flex; justify-content: space-between; border-bottom: 1px solid #1e293b; padding: 12px 0; font-size: 15px; }
+        .info-label { color: #94a3b8; }
+        .info-value { color: #f8fafc; font-weight: 500; }
+        
+        .box-obs { background: #1e293b; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 14px; line-height: 1.6; border-left: 4px solid #38bdf8; }
+
+        /* Manual de Uso */
+        .manual-item { margin-bottom: 20px; font-size: 14px; line-height: 1.5; color: #cbd5e1; }
+        .manual-item strong { color: #f8fafc; display: block; margin-bottom: 5px; }
+        .status-list { list-style: none; padding: 0; margin-top: 10px; }
+        .status-list li { margin-bottom: 8px; padding-left: 20px; position: relative; font-size: 13px; }
+        .status-list li::before { content: "•"; position: absolute; left: 0; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .no-result { text-align: center; color: #ef4444; display: none; margin-top: 20px; font-weight: bold; }
+        
+        @media (max-width: 900px) { .dashboard-wrapper { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+    <div class="panel-left">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://geotecit.com/wp-content/uploads/2020/09/Geoteicit_Logo_baja_digital.png" width="180">
+        </div>
+        <h2>Rastreo de Módulos</h2>
+
+        <div class="search-box">
+            <input type="text" id="inputBusqueda" placeholder="Ingrese Folio OR o Número de Serie...">
+            <button onclick="buscarOrden()">Buscar</button>
+        </div>
+
+        <div id="loader" style="display:none; text-align:center; color:#38bdf8; margin-bottom: 20px;">Consultando base de datos...</div>
+
+        <div id="resultado" class="result-card">
+            <div id="badgeEstatus" class="status-badge">Estatus</div>
+            
+            <div class="info-row"><span class="info-label">Folio OR:</span> <span class="info-value" id="resOR"></span></div>
+            <div class="info-row"><span class="info-label">Fecha Ingreso:</span> <span class="info-value" id="resFecha"></span></div>
+            <div class="info-row"><span class="info-label">Equipo:</span> <span class="info-value" id="resEquipo"></span></div>
+            <div class="info-row"><span class="info-label">Serie:</span> <span class="info-value" id="resSerie"></span></div>
+            <div class="info-row"><span class="info-label">Técnico:</span> <span class="info-value" id="resTecnico"></span></div>
+            
+            <div class="box-obs">
+                <strong>Diagnóstico / Acciones Realizadas:</strong><br>
+                <span id="resDetalle"></span>
+            </div>
+        </div>
+
+        <div id="errorBusqueda" class="no-result">⚠️ No se encontró ninguna coincidencia en la base de datos.</div>
+    </div>
+
+    <div class="panel-right">
+        <h3>📘 Manual de Uso Informativo</h3>
+        
+        <div class="manual-item">
+            <strong>1. Criterios de Búsqueda:</strong>
+            El sistema permite localizar equipos mediante el Folio de Orden (GT26...) o el Número de Serie físico. No es necesario distinguir entre mayúsculas y minúsculas.
+        </div>
+
+        <div class="manual-item">
+            <strong>2. Guía de Estatus Operativo:</strong>
+            <ul class="status-list">
+                <li><span style="color:#f59e0b">●</span> <b>Pendiente / Diagnóstico:</b> El equipo está en la cola de revisión técnica.</li>
+                <li><span style="color:#3b82f6">●</span> <b>Reparado:</b> El técnico concluyó la intervención. Pendiente de QA.</li>
+                <li><span style="color:#10b981">●</span> <b>Liberado:</b> Control de calidad aprobado. Listo para envío o IDC.</li>
+                <li><span style="color:#ef4444">●</span> <b>Scrap / Rechazado:</b> Equipo irreparable o no aprobado por calidad.</li>
+            </ul>
+        </div>
+
+        <div class="manual-item">
+            <strong>3. Detalles Técnicos:</strong>
+            La información mostrada en "Diagnóstico" es extraída directamente del reporte del ingeniero asignado. Si el campo está vacío, el equipo aún no ha sido intervenido.
+        </div>
+    </div>
+</div>
+
+<script>
+// PEGA TU NUEVA URL AQUÍ 🔴
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwTC7wcCHPg5gvLAynqYhTs9FhSrSLbBWiM9Rc6cvJRcfKkrU0RhoXEN2hJPus58C3X/exec";
+
+async function buscarOrden() {
+    const busqueda = document.getElementById("inputBusqueda").value.trim().toUpperCase();
+    const resDiv = document.getElementById("resultado");
+    const errDiv = document.getElementById("errorBusqueda");
+    const loader = document.getElementById("loader");
+
+    if(!busqueda) return;
+
+    resDiv.style.display = "none";
+    errDiv.style.display = "none";
+    loader.style.display = "block";
+
+    try {
+        const res = await fetch(URL_SCRIPT);
+        if (!res.ok) throw new Error();
+        const json = await res.json();
+        
+        // Buscamos coincidencia en Folio o Serie
+        const orden = json.dataHistorica.find(item => 
+            String(item.orden).toUpperCase() === busqueda || 
+            String(item.serie).toUpperCase() === busqueda
+        );
+
+        loader.style.display = "none";
+
+        if(orden) {
+            document.getElementById("resOR").innerText = orden.orden;
+            document.getElementById("resFecha").innerText = new Date(orden.fIngreso).toLocaleDateString('es-MX');
+            document.getElementById("resEquipo").innerText = orden.marca;
+            document.getElementById("resSerie").innerText = orden.serie;
+            document.getElementById("resTecnico").innerText = orden.tecnico || "Pendiente de asignación";
+            document.getElementById("resDetalle").innerText = orden.acciones || orden.diagnostico || orden.falla || "Sin registro de avance técnico.";
+
+            const badge = document.getElementById("badgeEstatus");
+            badge.innerText = orden.estatus;
+            
+            if(orden.estatus === "Liberado") {
+                badge.style.background = "#10b981"; badge.style.color = "#fff";
+            } else if(orden.estatus === "Reparado") {
+                badge.style.background = "#3b82f6"; badge.style.color = "#fff";
+            } else if(orden.estatus === "Irreparable/Scrap" || orden.estatus === "Rechazado") {
+                badge.style.background = "#ef4444"; badge.style.color = "#fff";
+            } else {
+                badge.style.background = "#f59e0b"; badge.style.color = "#0f172a";
+            }
+
+            resDiv.style.display = "block";
+        } else {
+            errDiv.style.display = "block";
+        }
+
+    } catch (e) {
+        loader.style.display = "none";
+        document.getElementById("errorBusqueda").innerText = "❌ Error de conexión al servidor. Revisa tu URL.";
+        errDiv.style.display = "block";
+    }
+}
+</script>
+
+</body>
+</html>

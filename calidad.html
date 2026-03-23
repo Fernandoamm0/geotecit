@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Calidad GeotecIT</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #0f172a;
+        color: #f8fafc;
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        padding: 30px;
+        margin: 0;
+    }
+
+    .container, .info-panel {
+        background: #1e293b;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        border: 1px solid #334155;
+    }
+
+    .container { width: 520px; }
+    .info-panel { width: 320px; font-size: 14px; color: #cbd5e1; }
+
+    /* Tema Azul para QA */
+    h2 { text-align: center; color: #3b82f6; margin-bottom: 20px; } 
+    h3 { color: #3b82f6; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+
+    .input-group { margin-bottom: 15px; }
+
+    label {
+        display: block;
+        font-size: 13px;
+        color: #94a3b8;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid #475569;
+        background: #0f172a;
+        color: white;
+        box-sizing: border-box;
+        font-size: 14px;
+        transition: border 0.3s;
+    }
+
+    input:focus, textarea:focus, select:focus { border-color: #3b82f6; outline: none; }
+    textarea { resize: vertical; height: 70px; }
+
+    button {
+        width: 100%;
+        background: #3b82f6;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 16px;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        margin-top: 15px;
+        transition: background 0.3s;
+    }
+
+    button:hover { background: #2563eb; }
+    button:disabled { background: #475569; cursor: not-allowed; color: #94a3b8; }
+
+    .logo { text-align: center; margin-bottom: 15px; }
+    .footer { text-align: center; margin-top: 25px; font-size: 13px; color: #94a3b8; line-height: 1.4; }
+    .footer strong { color: #cbd5e1; }
+    
+    .context-box {
+        background: #0f172a;
+        padding: 15px;
+        border-radius: 6px;
+        border: 1px solid #3b82f6; 
+        margin-bottom: 20px;
+        display: none;
+    }
+    .context-box p { margin: 6px 0; font-size: 13px; border-bottom: 1px dashed #334155; padding-bottom: 4px;}
+    .context-box p:last-child { border-bottom: none; }
+    .context-box span { color: #3b82f6; font-weight: bold; }
+    .tech-text { color: #f59e0b !important; } 
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="logo">
+        <img src="https://geotecit.com/wp-content/uploads/2020/09/Geoteicit_Logo_baja_digital.png" width="200" alt="GeotecIT">
+    </div>
+
+    <h2>Control de Calidad (QA)</h2>
+
+    <div class="input-group">
+        <label>Seleccionar Módulo Reparado</label>
+        <select id="ordenPendiente" onchange="cargarDatosEquipo()">
+            <option value="">Conectando con base de datos...</option>
+        </select>
+    </div>
+
+    <div class="context-box" id="panelContexto">
+        <p>Marca: <span id="ctxMarca">-</span> | Serie: <span id="ctxSerie">-</span></p>
+        <p>Reporte Inicial: <span id="ctxFalla">-</span></p>
+        <p>Técnico a cargo: <span class="tech-text" id="ctxTecnico">-</span></p>
+        <p>Diagnóstico real: <span class="tech-text" id="ctxDiagnostico">-</span></p>
+        <p>Acciones realizadas: <span class="tech-text" id="ctxAcciones">-</span></p>
+    </div>
+
+    <div class="input-group">
+        <label>Inspector de Calidad</label>
+        <input type="text" id="inspector" placeholder="Nombre de quien audita">
+    </div>
+
+    <div class="input-group">
+        <label>Observaciones de Pruebas</label>
+        <textarea id="observaciones" placeholder="Ej: Pasó pruebas de lectura y estrés satisfactoriamente..."></textarea>
+    </div>
+
+    <div class="input-group">
+        <label>Veredicto / Estatus Final</label>
+        <select id="estatus">
+            <option value="">-- Selecciona resultado de calidad --</option>
+            <option value="Liberado">✅ Liberado (Listo para envío)</option>
+            <option value="Rechazado">❌ Rechazado (Regresa a laboratorio)</option>
+        </select>
+    </div>
+
+    <button onclick="guardarCalidad()" id="btnGuardar" disabled>Registrar Calidad</button>
+
+    <div class="footer">
+        <strong>Sistema de Control y Calidad</strong><br>
+        Desarrollado por Ing. Fernando Mora
+    </div>
+</div>
+
+<div class="info-panel">
+    <h3>🔍 Guía de Auditoría</h3>
+    <p><b>1. Filtro Automático:</b><br> 
+    Esta bandeja solo recibe los módulos que los técnicos hayan marcado oficialmente como <i>Reparados</i>.</p>
+    
+    <p><b>2. Revisión de Historial:</b><br> 
+    Al seleccionar una OR, lea atentamente las <b>Acciones Realizadas</b> por el técnico para enfocar sus pruebas de estrés en esos componentes.</p>
+    
+    <p><b>3. Veredicto Final:</b></p>
+    <ul style="padding-left: 20px; margin-top: 5px;">
+        <li><b>Liberado:</b> El módulo funciona al 100%. Esto finaliza el flujo y queda listo para embalaje.</li>
+        <li><b>Rechazado:</b> Si el módulo falla, regresará automáticamente a la bandeja del Laboratorio y el técnico deberá re-evaluarlo.</li>
+    </ul>
+</div>
+
+<script>
+// Tu URL definitiva ya configurada
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwTC7wcCHPg5gvLAynqYhTs9FhSrSLbBWiM9Rc6cvJRcfKkrU0RhoXEN2hJPus58C3X/exec"; 
+let equiposReparados = []; 
+
+async function cargarOrdenes() {
+    const selectOrden = document.getElementById("ordenPendiente");
+    
+    try {
+        const respuesta = await fetch(URL_SCRIPT);
+        const resultado = await respuesta.json();
+
+        if(resultado.status === "success") {
+            // MAGIA: Tomamos la caja de Calidad
+            equiposReparados = resultado.dataCalidad; 
+            
+            if (equiposReparados.length === 0) {
+                selectOrden.innerHTML = '<option value="">No hay equipos pendientes de QA</option>';
+                return;
+            }
+
+            let opciones = '<option value="">-- Selecciona OR a inspeccionar --</option>';
+            equiposReparados.forEach(equipo => {
+                opciones += `<option value="${equipo.orden}">${equipo.orden}</option>`;
+            });
+            
+            selectOrden.innerHTML = opciones;
+            document.getElementById("btnGuardar").disabled = false;
+        } else {
+            selectOrden.innerHTML = '<option value="">Error en los datos</option>';
+        }
+    } catch(e) {
+        console.error("Error al hacer fetch:", e);
+        selectOrden.innerHTML = '<option value="">Error de conexión. Revisa URL.</option>';
+    }
+}
+
+function cargarDatosEquipo() {
+    const ordenSelec = document.getElementById("ordenPendiente").value;
+    const panel = document.getElementById("panelContexto");
+    
+    if(ordenSelec) {
+        const equipo = equiposReparados.find(eq => eq.orden === ordenSelec);
+        if(equipo) {
+            panel.style.display = "block";
+            document.getElementById("ctxMarca").innerText = equipo.marca || "N/A";
+            document.getElementById("ctxSerie").innerText = equipo.serie || "N/A";
+            document.getElementById("ctxFalla").innerText = equipo.falla || "Sin reporte";
+            document.getElementById("ctxTecnico").innerText = equipo.tecnico || "N/A";
+            document.getElementById("ctxDiagnostico").innerText = equipo.diagnostico || "N/A";
+            document.getElementById("ctxAcciones").innerText = equipo.acciones || "N/A";
+        }
+    } else {
+        panel.style.display = "none";
+    }
+}
+
+async function guardarCalidad() {
+    const btn = document.getElementById("btnGuardar");
+    
+    const data = {
+        accion: "actualizar_calidad", 
+        orden: document.getElementById("ordenPendiente").value,
+        inspector: document.getElementById("inspector").value,
+        observaciones: document.getElementById("observaciones").value,
+        estatus: document.getElementById("estatus").value, 
+        fechaLiberacion: new Date().toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    };
+
+    if(!data.orden || !data.inspector || !data.estatus){
+        alert("Selecciona una Orden, ingresa tu nombre y emite el Veredicto.");
+        return;
+    }
+
+    btn.innerText = "Registrando...";
+    btn.disabled = true;
+
+    try {
+        const respuesta = await fetch(URL_SCRIPT, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "text/plain;charset=utf-8" }
+        });
+
+        const resultado = await respuesta.json();
+
+        if(resultado.status === "success") {
+            alert(`✅ Auditoría completada. Estatus: ${data.estatus}`);
+            location.reload(); 
+        } else {
+            alert("Hubo un problema al guardar.");
+            btn.innerText = "Registrar Calidad";
+            btn.disabled = false;
+        }
+    } catch (error) {
+        alert("Error de conexión al guardar.");
+        btn.innerText = "Registrar Calidad";
+        btn.disabled = false;
+    }
+}
+
+cargarOrdenes();
+</script>
+
+</body>
+</html>
